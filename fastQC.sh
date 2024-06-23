@@ -38,7 +38,7 @@ echo
 n=$(ls qc/fastqc-host-removed/*1_fastqc.html | wc -l)
 echo $n
 
-multiqc qc/fastqc-host-removed multiqc2
+multiqc qc/fastqc-host-removed multiqc-HR
 
 
 exit
