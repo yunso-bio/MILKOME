@@ -43,4 +43,4 @@ for N in $samples; do
 done
 
 
-mail -s 'VAMB - binning is done' yunso@dtu.dk
+mail -s 'AVAMB - binning is done' yunso@dtu.dk
