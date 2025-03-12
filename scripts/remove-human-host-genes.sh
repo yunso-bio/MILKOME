@@ -22,7 +22,7 @@ for N in $file; do
     echo 
     echo 'processing' $N
     bowtie2 -p 40 \
-            -x /home/projects/dtu_00032/GRCh38_noalt_as/GRCh38_noalt_as \
+            -x /home/projects/dtu_00032/db/GRCh38_noalt_as/GRCh38_noalt_as \
             -1 $f -2 $r \
             --un-conc-gz "data/host_removed/${N}" > "data/bowtie/${N}_mapped_unmapped.sam"
 done
