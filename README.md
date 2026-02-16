@@ -11,4 +11,4 @@ The sequence data analysis pipeline is outlined below, and the used scripts can 
 3. Contig assembly
 4. Retrieval of metagenome-assembled genomes (MAGs)
 5. Mapping MAGs to filtered sequences
-6. Annotation and characterization of MAGs
+6. Annotation and charactersation of MAGs
