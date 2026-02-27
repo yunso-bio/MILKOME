@@ -1,4 +1,4 @@
-### SI Figure 11 — UpSet plot: Backhed vs Milkome ===========
+### SI Figure 7 — UpSet plot: Backhed vs Milkome ===========
 ### Author: Yunjeong So
 
 # Load library
