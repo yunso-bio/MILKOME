@@ -13,16 +13,11 @@ module load minimap2/2.24r1122
 module load samtools/1.18
 module load vamb/4.1.3 
 
+mkdir -p bins/avamb/{catalogue,bams,sorted,bins}
 
-cd /home/projects/dtu_00032/analysis/milk-cohort
-mkdir bins/avamb
-mkdir bins/avamb/catalogue
-mkdir bins/avamb/bams
-mkdir bins/avamb/sorted
-mkdir bins/avamb/bins
+samples="a list of sampleIDs"
 
-samples="E150024856_L01_UDB-35 E150024856_L01_UDB-36 E150024856_L01_UDB-37 E150024856_L01_UDB-38 E150024856_L01_UDB-39"
-
+# Run Avamb with vae-aaee model
 for N in $samples; do
     assembly="data/megahit/${N}/final.contigs.fa"
     f="data/trimmomatic/${N}_trimmed_1.fq.gz" 
