@@ -14,16 +14,16 @@ module load megahit/1.2.9
 
 # Setup working directory and paths
 path="path to working directory"
-cd "$path" || exit
-mkdir -p megahit
+mkdir -p ${path}/results/megahit
 file=$(cat "path to a list of sampels")
+trim_path="${path}/results/trimmomatic"
 
 # Run MEGAHIT to assemble contigs
-for i in $file; do
-	f="${path}/${i}_trimmed_1.fq.gz"
-	r="${path}/${i}_trimmed_2.fq.gz"
+for sample in ${samples}; do
+	f="${trim_path}/${sample}_trimmed_1.fq.gz"
+	r="${trim_path}/${sample}_trimmed_2.fq.gz"
     echo 'processing' $file
-    megahit -1 $f -2 $r -o "${path}/megahit/${i}"
+    megahit -1 $f -2 $r -o "${path}/results/megahit/${sample}"
 done
 
 echo 'Job is done' | mail -s 'megahit is done' yunso@dtu.dk
