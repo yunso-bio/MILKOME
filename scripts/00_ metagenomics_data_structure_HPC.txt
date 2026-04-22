@@ -1,1 +1,24 @@
+#  Directory structure for raw metagenomic sequencing data on HPC
 
+project/
+├── data/
+│   ├── raw/
+│   │   ├── sample1_1.fq.gz
+│   │   ├── sample1_2.fq.gz
+│   │   └── ...
+│   ├── db/
+│
+├── results/
+│   ├── qc/
+│   │   ├── fastqc/
+│   │   └── multiqc/
+│   ├── trimmomatic/
+│   ├── host_removed/
+│   ├── bowtie/
+│   └── megahit/
+│
+└── scripts/
+    ├── 01_qc.sh
+    ├── 02_trim.sh
+    ├── 03_remove_host.sh
+    └── 04_megahit.sh
