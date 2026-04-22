@@ -15,14 +15,14 @@ module load megahit/1.2.9
 # Setup working directory and paths
 path="path to working directory"
 mkdir -p ${path}/results/megahit
-file=$(cat "path to a list of sampels")
-trim_path="${path}/results/trimmomatic"
+samples=$(cat "path to a list of sampels")
+clean_path="${path}/results/host_removed"
 
 # Run MEGAHIT to assemble contigs
 for sample in ${samples}; do
-	f="${trim_path}/${sample}_trimmed_1.fq.gz"
-	r="${trim_path}/${sample}_trimmed_2.fq.gz"
-    echo 'processing' $file
+	f="${clean_path}/${sample}.1"
+	r="${clean_path}/${sample}.2"
+    echo 'processing' ${sample}
     megahit -1 $f -2 $r -o "${path}/results/megahit/${sample}"
 done
 
