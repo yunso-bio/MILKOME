@@ -8,21 +8,22 @@
 #PBS -l mem=188gb
 #PBS -l walltime=72:00:00
 
+# Load modules
 module load tools
 module load perl
 module load java/1.8.0
 module load fastqc/0.11.9
 module load trimmomatic/0.38
 
-
-path="/home/projects/dtu_00032/analysis/milk-cohort"
+# Setup working directory and paths
+path="path to working directory"
 cd $path
-
 file=$(cat "${path}/sample-list.txt")
 raw="${path}/data/raw"
 trimP="${path}/data/trimmomatic"
-mkdir $trimP
+mkdir -p $trimP
 
+# Run Trimommatic
 for sample in $file; do
     f="$raw/${sample}_1.fq.gz"
     r="$raw/${sample}_2.fq.gz"
