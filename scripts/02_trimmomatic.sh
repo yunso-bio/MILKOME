@@ -19,7 +19,7 @@ module load trimmomatic/0.38
 path="path to working directory"
 samples=$(cat "Path to a list of samples")
 raw_path="${path}/data/raw"
-trim_path="${path}/data/trimmomatic"
+trim_path="${path}/results/trimmomatic"
 mkdir -p $trim_path
 
 # Run Trimommatic
