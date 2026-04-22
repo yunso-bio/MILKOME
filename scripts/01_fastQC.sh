@@ -24,15 +24,15 @@ samples=$(cat "Path to sample list file")
 for sample in ${samples}; do
     f="${path}/data/raw/${sample}_1.fq.gz"
     r="${path}/data/raw/${sample}_2.fq.gz"
-	fastqc -o qc/fastqc -t 40 $f $r
+	fastqc -o ${path}/results/qc/fastqc -t 40 $f $r
 done
 
 # print out the number of processed samples
 echo
-n=$(ls qc/fastqc/*1_fastqc.html | wc -l)
+n=$(ls ${path}/results/qc/fastqc/*1_fastqc.html | wc -l)
 echo $n
 
 # Run multiQC
-multiqc qc/fastqc multiqc-HR
+multiqc ${path}/results/qc/fastqc ${path}/results/qc/multiqc
 
 exit
