@@ -8,21 +8,23 @@
 #PBS -l mem=188gb
 #PBS -l walltime=72:00:00
 
-cd /home/projects/dtu_00032/analysis/milk-cohort
-
+# Load modules 
 module load tools
 module load megahit/1.2.9
 
-mkdir megahit
+# Setup working directory and paths
+path="path to working directory"
+cd "$path" || exit
+mkdir -p megahit
+file=$(cat "path to a list of sampels")
 
-file=$(cat "10-firsthalf.txt")
+# Run MEGAHIT to assemble contigs
 for i in $file; do
-	f=$"/home/projects/dtu_00032/analysis/milk-cohort/data/trimmomatic/${i}_trimmed_1.fq.gz"
-	r=$"/home/projects/dtu_00032/analysis/milk-cohort/data/trimmomatic/${i}_trimmed_2.fq.gz"
+	f="${path}/${i}_trimmed_1.fq.gz"
+	r="${path}/${i}_trimmed_2.fq.gz"
     echo 'processing' $file
-    megahit -1 $f -2 $r -o "data/megahit/${i}"
+    megahit -1 $f -2 $r -o "${path}/megahit/${i}"
 done
-
 
 echo 'Job is done' | mail -s 'megahit is done' yunso@dtu.dk
 
