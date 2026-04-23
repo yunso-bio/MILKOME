@@ -14,16 +14,16 @@ module load megahit/1.2.9
 
 # Setup working directory and paths
 path="path to working directory"
-mkdir -p ${path}/results/megahit
+mkdir -p $path/results/megahit
 samples=$(cat "path to a list of sampels")
-clean_path="${path}/results/host_removed"
+clean_path="$path/results/host_removed"
 
 # Run MEGAHIT to assemble contigs
 for sample in ${samples}; do
-	f="${clean_path}/${sample}.1"
-	r="${clean_path}/${sample}.2"
-    echo 'processing' ${sample}
-    megahit -1 $f -2 $r -o "${path}/results/megahit/${sample}"
+    f="$clean_path/${sample}_1.fq.gz"
+    r="$clean_path/${sample}_2.fq.gz"
+    echo 'processing' $sample
+    megahit -1 $f -2 $r -o "$path/results/megahit/$sample"
 done
 
 echo 'Job is done' | mail -s 'megahit is done' yunso@dtu.dk
