@@ -5,13 +5,13 @@ module load tools
 module load bakta/1.9.3
 
 # path
-BTdb="/home/projects/dtu_00032/db/bakta/db"
-BTpath="/home/projects/dtu_00032/analysis/milk-cohort/meta/bakta/non-stool"
-cd /home/projects/dtu_00032/analysis/milk-cohort || exit 1
+path="path to working directory"
+BTdb="$path/db/bakta_db"
+BTpath="$path/results/bakta/"
 mkdir -p $BTpath
 
 # Map ids
-samples="E100079703_L01_UDB-100 E100079703_L01_UDB-101"
+samples=$(cat "path to a list of stool samples")
 IFS=' ' read -r -a samples_array <<< "$samples"
 
 declare -A sample_map
@@ -24,7 +24,7 @@ for i in "${!samples_array[@]}"; do
 done
 
 # Create a mapping file
-mapping_file="/home/projects/dtu_00032/analysis/milk-cohort/meta/sample_mapping.txt"
+mapping_file="path_to/sample_mapping.txt"
 : > "$mapping_file"
 for old_name in "${!sample_map[@]}"; do
     echo "$old_name -> ${sample_map[$old_name]}" >> "$mapping_file"
@@ -44,5 +44,5 @@ for old_name in "${!sample_map[@]}"; do
           --output $BTpath/$N \
           --locus-tag $N \
           --prefix $N \
-          "data/megahit/${old_name}/final.contigs.fa"
+          "$path/results/megahit/${old_name}/final.contigs.fa"
 done
