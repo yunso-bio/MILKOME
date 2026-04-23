@@ -15,17 +15,17 @@ module load vamb/4.1.3
 
 # Setup working directory and paths
 path="path to working directory"
-mkdir -p $path/result/bins/avamb/{catalogue,bams,sorted,bins}
+mkdir -p $path/results/bins/avamb/{catalogue,bams,sorted,bins}
 stool_samples=$(cat "path to a list of stool samples")
 
 # Run Avamb for stool samples with vae-aaee model
-for N in $samples; do
+for N in $stool_samples; do
     assembly="$path/result/megahit/${N}/final.contigs.fa"
-    f="$path/result/host_removed/${sample}_1.fq.gz"
-    r="$path/result/host_removed/${sample}_2.fq.gz"
-    bam="$path/result/bins/avamb/bams/${N}.bam"
-    sorted="$path/result/bins/avamb/sorted/${N}_sorted.bam"
-    mmi="$path/result/bins/avamb/catalogue/${N}.mmi"
+    f="$path/results/host_removed/${N}_1.fq.gz"
+    r="$path/results/host_removed/${N}_2.fq.gz"
+    bam="$path/results/bins/avamb/bams/${N}.bam"
+    sorted="$path/results/bins/avamb/sorted/${N}_sorted.bam"
+    mmi="$path/results/bins/avamb/catalogue/${N}.mmi"
 
     # Index sample
     echo 'processing' $N 
@@ -41,13 +41,13 @@ done
 # Run Avamb for enriched samples with vae-aaee model
 enriched_samples=$(cat "path to a list of stool samples")
 
-for N in $samples; do
+for N in $enriched_samples; do
     assembly="$path/result/megahit/${N}/final.contigs.fa"
-    f="$path/result/trimmomatic/${N}_trimmed_1.fq.gz" 
-    r="$path/result/trimmomatic/${N}_trimmed_2.fq.gz"
-    bam="$path/result/bins/avamb/bams/${N}.bam"
-    sorted="$path/result/bins/avamb/sorted/${N}_sorted.bam"
-    mmi="$path/result/bins/avamb/catalogue/${N}.mmi"
+    f="$path/results/trimmomatic/${N}_trimmed_1.fq.gz" 
+    r="$path/results/trimmomatic/${N}_trimmed_2.fq.gz"
+    bam="$path/results/bins/avamb/bams/${N}.bam"
+    sorted="$path/results/bins/avamb/sorted/${N}_sorted.bam"
+    mmi="$path/results/bins/avamb/catalogue/${N}.mmi"
 
     # Index sample
     echo 'processing' $N 
@@ -57,5 +57,5 @@ for N in $samples; do
     samtools sort $bam -@ 40 -o $sorted 
     
     # Run Vamb
-    vamb --outdir $path/result/bins/avamb/bins/${N} --model vae-aae --fasta $assembly --bamfiles $sorted --minfasta 200000
+    vamb --outdir $path/results/bins/avamb/bins/${N} --model vae-aae --fasta $assembly --bamfiles $sorted --minfasta 200000
 done
