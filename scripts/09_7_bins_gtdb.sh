@@ -19,7 +19,7 @@ base_dir="path to a working directory"
 
 # Run gtdbtk
 gtdbtk classify_wf --cpus 40 \
-				   --genome_dir $base_dir/bins/ani98 \
+				   --genome_dir $base_dir/bins/das_ani98 \
 				   -x "fna" \
 				   --out_dir  $base_dir/bins/gtdb \
 				   --skip_ani_screen;
