@@ -2,8 +2,8 @@
 
 # Setup working directory and paths
 base_dir="path to working directory"
-scriptpath="${base_dir}/meta/job_scripts/mp"
-logpath="${base_dir}/meta/logs/mp"
+scriptpath="${base_dir}/results/bif-metaphlan/job_scripts/mp"
+logpath="${base_dir}/results/bif-metaphlan/logs/mp"
 mkdir -p "$scriptpath" "$logpath"
 
 ########################################
