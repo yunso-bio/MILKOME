@@ -16,23 +16,23 @@ module load fastqc/0.11.9
 module load multiqc/1.12
 
 # Setup working directory and paths
-path="path to working directory"
-mkdir -p ${path}/results/qc/{fastqc,multiqc}
+BASE="path to working directory"
+mkdir -p $BASE/results/qc/{fastqc,multiqc}
 samples=$(cat "Path to sample list file")
 
 # Run FastQC
 for sample in ${samples}; do
-    f="$path/data/raw/${sample}_1.fq.gz"
-    r="$path/data/raw/${sample}_2.fq.gz"
-	fastqc -o ${path}/results/qc/fastqc -t 40 $f $r
+    f="$BASE/data/raw/${sample}_1.fq.gz"
+    r="$BASE/data/raw/${sample}_2.fq.gz"
+	fastqc -o $BASE/results/qc/fastqc -t 40 $f $r
 done
 
 # print out the number of processed samples
 echo
-n=$(ls $path/results/qc/fastqc/*1_fastqc.html | wc -l)
+n=$(ls $BASE/results/qc/fastqc/*1_fastqc.html | wc -l)
 echo $n
 
 # Run multiQC
-multiqc -o "$path/results/qc/multiqc" "$path/results/qc/fastqc"
+multiqc -o "$BASE/results/qc/multiqc" "$BASE/results/qc/fastqc"
 
 exit
