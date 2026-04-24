@@ -17,8 +17,8 @@ module load minimap2/2.24r1122
 module load bowtie2/2.5.2
 
 # setup working direcoty and paths
-path="path to working directory"
-mkdir -p "$path/results/bins/semi_single_bin"/{maps,sams,bams,sorted,bins}
+BASE="path to working directory"
+mkdir -p "$BASE/results/bins/semi_single_bin"/{maps,sams,bams,sorted,bins}
 
 ### Mapping ###
 mapfile -t samples < "path to a list of samples"
@@ -26,15 +26,15 @@ mapfile -t samples < "path to a list of samples"
 for N in "${samples[@]}"; do
     echo "Processing $N"
 
-    contig="$path/results/bins/semi_single_bin/maps/${N}_contigs"
+    contig="$BASE/results/bins/semi_single_bin/maps/${N}_contigs"
     assembly="path/results/megahit/final.contigs.fa"
-    f="$path/results/trimmomatic/${N}_trimmed_1.fq.gz"
-    r="$path/results/trimmomatic/${N}_trimmed_2.fq.gz"
+    f="$BASE/results/trimmomatic/${N}_trimmed_1.fq.gz"
+    r="$BASE/results/trimmomatic/${N}_trimmed_2.fq.gz"
 
-    sam="$path/results/bins/semi_single_bin/sams/${N}.sam"
-    bam="$path/results/bins/semi_single_bin/bams/${N}.bam"
-    mbam="$path/results/bins/semi_single_bin/bams/${N}.mapped.bam"
-    sorted="$path/results/bins/semi_single_bin/sorted/${N}.mapped.sorted.bam"
+    sam="$BASE/results/bins/semi_single_bin/sams/${N}.sam"
+    bam="$BASE/results/bins/semi_single_bin/bams/${N}.bam"
+    mbam="$BASE/results/bins/semi_single_bin/bams/${N}.mapped.bam"
+    sorted="$BASE/results/bins/semi_single_bin/sorted/${N}.mapped.sorted.bam"
 
     # Input checks
     if [[ ! -f "$assembly" || ! -f "$f" || ! -f "$r" ]]; then
@@ -57,7 +57,7 @@ for N in "${samples[@]}"; do
     samtools sort "$mbam" -o "$sorted" -@ 40
 
     ### Binning ###
-    outdir="$path/results/bins/semi_single_bin/bins/${N}"
+    outdir="$BASE/results/bins/semi_single_bin/bins/${N}"
     mkdir -p "$outdir"
 
     SemiBin2 single_easy_bin \
