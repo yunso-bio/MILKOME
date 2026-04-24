@@ -14,18 +14,18 @@ module load samtools/1.18
 module load vamb/4.1.3 
 
 # Setup working directory and paths
-path="path to working directory"
-mkdir -p $path/results/bins/avamb/{catalogue,bams,sorted,bins}
+BASE="path to working directory"
+mkdir -p $BASE/results/bins/avamb/{catalogue,bams,sorted,bins}
 stool_samples=$(cat "path to a list of stool samples")
 
 # Run Avamb for stool samples with vae-aaee model
 for N in $stool_samples; do
-    assembly="$path/result/megahit/${N}/final.contigs.fa"
-    f="$path/results/host_removed/${N}_1.fq.gz"
-    r="$path/results/host_removed/${N}_2.fq.gz"
-    bam="$path/results/bins/avamb/bams/${N}.bam"
-    sorted="$path/results/bins/avamb/sorted/${N}_sorted.bam"
-    mmi="$path/results/bins/avamb/catalogue/${N}.mmi"
+    assembly="$BASE/result/megahit/${N}/final.contigs.fa"
+    f="$BASE/results/host_removed/${N}_1.fq.gz"
+    r="$BASE/results/host_removed/${N}_2.fq.gz"
+    bam="$BASE/results/bins/avamb/bams/${N}.bam"
+    sorted="$BASE/results/bins/avamb/sorted/${N}_sorted.bam"
+    mmi="$BASE/results/bins/avamb/catalogue/${N}.mmi"
 
     # Index sample
     echo 'processing' $N 
@@ -35,19 +35,19 @@ for N in $stool_samples; do
     samtools sort $bam -@ 40 -o $sorted 
     
     # Run Vamb
-    vamb --outdir $path/result/bins/avamb/bins/${N} --model vae-aae --fasta $assembly --bamfiles $sorted --minfasta 200000
+    vamb --outdir $BASE/result/bins/avamb/bins/${N} --model vae-aae --fasta $assembly --bamfiles $sorted --minfasta 200000
 done
 
 # Run Avamb for enriched samples with vae-aaee model
 enriched_samples=$(cat "path to a list of stool samples")
 
 for N in $enriched_samples; do
-    assembly="$path/result/megahit/${N}/final.contigs.fa"
-    f="$path/results/trimmomatic/${N}_trimmed_1.fq.gz" 
-    r="$path/results/trimmomatic/${N}_trimmed_2.fq.gz"
-    bam="$path/results/bins/avamb/bams/${N}.bam"
-    sorted="$path/results/bins/avamb/sorted/${N}_sorted.bam"
-    mmi="$path/results/bins/avamb/catalogue/${N}.mmi"
+    assembly="$BASE/result/megahit/${N}/final.contigs.fa"
+    f="$BASE/results/trimmomatic/${N}_trimmed_1.fq.gz" 
+    r="$BASE/results/trimmomatic/${N}_trimmed_2.fq.gz"
+    bam="$BASE/results/bins/avamb/bams/${N}.bam"
+    sorted="$BASE/results/bins/avamb/sorted/${N}_sorted.bam"
+    mmi="$BASE/results/bins/avamb/catalogue/${N}.mmi"
 
     # Index sample
     echo 'processing' $N 
@@ -57,5 +57,5 @@ for N in $enriched_samples; do
     samtools sort $bam -@ 40 -o $sorted 
     
     # Run Vamb
-    vamb --outdir $path/results/bins/avamb/bins/${N} --model vae-aae --fasta $assembly --bamfiles $sorted --minfasta 200000
+    vamb --outdir $BASE/results/bins/avamb/bins/${N} --model vae-aae --fasta $assembly --bamfiles $sorted --minfasta 200000
 done
