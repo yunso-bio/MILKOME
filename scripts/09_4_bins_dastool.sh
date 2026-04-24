@@ -42,7 +42,7 @@ for n in "${samples_array[@]}"; do
         echo ""
         echo "cd \"$i\""
         echo ""
-        echo "contig=\"$base_dir/results/unique_megahit/final.contigs.fa\""
+        echo "contig=\"$base_dir/results/megahit/final.contigs.fa\""
         echo ""
     } > "$script_name"
 
