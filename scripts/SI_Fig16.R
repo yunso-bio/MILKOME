@@ -1,4 +1,4 @@
-### SI Figure 17 MAGs Upset
+### SI Figure 16 MAGs Upset
 ### Author: Yunjeong So
 
 # Load libraries
