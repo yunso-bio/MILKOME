@@ -83,6 +83,6 @@ for N in "${samples[@]}"; do
             --input "$f" \
             -x fa.gz \
             --output-directory "$base_dir/results/bins/semi_single_bin/checkm2/${N}_${i}" \
-            --database_path "$base_dir/db/CheckM2_database/uniref100.KO.1.dmnd"
+            --database_path "$base_dir/db/CheckM2_db/uniref100.KO.1.dmnd"
     done
 done
