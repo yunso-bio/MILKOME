@@ -3,10 +3,10 @@
 set -euo pipefail
 
 # setup paths and working director
-path="path to working directory"
-script_path="$path/scripts/dbcan-scripts"
-dbcan_path="$path/results/dbcan"
-bakta_path="$path/results/bakta"
+BASE="path to working directory"
+script_path="$BASE/scripts/dbcan-scripts"
+dbcan_path="$BASE/results/dbcan"
+bakta_path="$BASE/results/bakta"
 mkdir -p "$script_path" "$dbcan_path"
 samples=$(cat "path to a list of stool samples")
 
