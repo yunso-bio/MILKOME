@@ -8,10 +8,6 @@
 #PBS -l mem=188gb
 #PBS -l walltime=72:00:00
 
-base_dir="path to bins"
-
-### Coverm Clustering Dereplicate bins
-
 # Load modules
 module load tools
 module load gcc/12.2.0
@@ -19,6 +15,8 @@ module load fastani/1.34
 module load dashing/0.4.0
 module load coverm/0.7.0
 
+### Coverm Clustering Dereplicate bins
+base_dir="path to bins"
 coverm cluster -t 40  \
 				--genome-fasta-directory $base_dir/bins/filtered_bins \
 				--output-cluster-definition ani98-cluster-definition \
