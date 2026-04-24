@@ -15,10 +15,10 @@ module load fastqc/0.11.9
 module load trimmomatic/0.38
 
 # Setup working directory and paths
-path="path to working directory"
+BASE="path to working directory"
 samples=$(cat "Path to a list of samples")
-raw_path="$path/data/raw"
-trim_path="$path/results/trimmomatic"
+raw_path="$BASE/data/raw"
+trim_path="$BASE/results/trimmomatic"
 mkdir -p $trim_path
 
 # Run Trimommatic
