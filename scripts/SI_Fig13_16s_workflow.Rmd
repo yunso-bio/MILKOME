@@ -1,57 +1,13 @@
 # 16S rRNA sequencing
+# Author: Lea Eschen Skytte
 
 This is the workflow of analysing the 16S rRNA sequencing of the 18 samples. I have followed Qiime2 analysis workflow: <https://amplicon-docs.qiime2.org/en/stable/>.
-
-## Directory structure (What files and where they are)
-
-```         
-16S_project/
-│
-├── sample-metadata.tsv                   # Sample metadata (experimental variables)
-├── manifest.tsv                          # Raw paired-end FASTQ manifest
-|
-├── Fastq/                                # Raw data
-│   ├── Fiber1_S4_L001_R1_001.fastq.gz           
-│   ├── Fiber1_S4_L001_R2_001.fastq.gz 
-│   └── ...
-|
-├── 5_strains/
-│   ├── 5_strains_refseqs.fasta           # Reference sequences of the 5 strains
-│   ├── taxonomy.tsv                      # Reference taxonomy table for the 5 strains
-│   ├── refs.qza                          # Imported reference sequences (QIIME2 artifact)
-│   ├── taxonomy.qza                      # Imported taxonomy artifact
-│   ├── refs-v3v4.qza                     # Extracted V3-V4 region for classifier
-│   └── 5strain-classifier.qza            # Trained naive-bayes classifier
-│
-├── results/
-│   ├── demux.qza                         # Imported raw sequences (paired-end)
-│   ├── demux.qzv                         # Visualization of demultiplexed reads
-│   ├── trimmed-seqs.qza                  # Primer-trimmed sequences
-│   ├── trimmed-seqs.qzv                  # Visualization of trimmed reads
-│   ├── asv-seqs.qza                      # DADA2 representative sequences
-│   ├── asv-table.qza                     # DADA2 feature table (counts)
-│   ├── denoising-stats.qza               # DADA2 stats
-│   ├── denoising-stats.qzv               # Visualization of denoising stats
-│   ├── asv-frequencies.qza               # ASV frequency table
-│   ├── sample-frequencies.qza            # Sample frequency table
-│   ├── asv-seqs.qzv                      # Visualization of representative ASVs
-|
-│   ├── taxonomy.qza                      # ASV taxonomy assigned by classifier
-│   ├── taxonomy.qzv                      # Visualization of taxonomy
-│   ├── barplot.qzv                       # Barplot
-│
-│   ├── g-table.qza                       # ASVs filtered to genus-level (g__)
-│   ├── g-table.qzv                       # Visualization of collapsed genus table
-│   ├── g-feature-frequencies.qza         # Genus-level feature frequencies
-│   └── g-sample-frequencies.qza          # Genus-level sample frequencies
-|
-```
 
 ## QIIME 2 Amplicon Analysis Step-By-Step Guide
 
 Version 2026.1
 
-View files: <https://view.qiime2.org/>
+Files you create can easily be view here: <https://view.qiime2.org/>
 
 ### Import raw paired-end sequences
 
@@ -326,6 +282,18 @@ df6_long$Step <- factor(df6_long$Step,
                         levels = c(' ', '1', '2', '3', '4', 'HMO 1', 
                                    'Fiber 2', 'HMO 3', 'Fiber 4'))
 
+library(writexl)
+
+# csv file of df6_long
+data <- df6_long %>%
+  ungroup() %>%
+  select(Medium, Step, Genus, rel_abundance) %>%
+  arrange(Medium, Step, Genus, rel_abundance) %>%
+  mutate(Medium = recode(Medium, " " = "Glucose")) %>%
+  write_xlsx("relative_abundance.xlsx")
+
+write.csv(data, 'relative_abundance.csv', row.names = FALSE)
+write_excel_csv()
 
 # creating the barplot
 ggplot(data = df6_long, aes( x = rel_abundance, y = Step)) +
