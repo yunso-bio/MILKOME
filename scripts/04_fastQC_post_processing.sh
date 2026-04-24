@@ -35,10 +35,10 @@ for sample in ${enriched_samples}; do
 	fastqc -o ${path}/results/qc/fastqc -t 40 $f $r
 done
 
-n=$(ls qc/fastqc_cleaned/*1_fastqc.html | wc -l)
+n=$(ls $BASE/results/qc/fastqc_cleaned/*1_fastqc.html | wc -l)
 echo $n
 
 # Run MultiQC
-multiqc qc/fastqc_cleaned multiqc_cleaned
+multiqc -o "$BASE/results/qc/multiqc_cleaned" "$BASE/results/qc/fastqc_cleaned"
 
 exit
