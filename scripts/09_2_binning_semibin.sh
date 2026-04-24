@@ -15,11 +15,10 @@ module load samtools/1.18
 module load minimap2/2.24r1122
 module load bowtie2/2.5.2
 module load checkm2/1.0.2
-module load gtdbtk/2.3.2
 
 # setup working direcoty and paths
 base_dir="path to working directory"
-mkdir -p "$base_dir/results/bins/semi_single_bin"/{maps,sams,bams,sorted,bins,gtdb,checkm2}
+mkdir -p "$base_dir/results/bins/semi_single_bin"/{maps,sams,bams,sorted,bins,checkm2}
 
 mapfile -t samples < "/path/to/sample_list.txt"
 
@@ -68,18 +67,6 @@ for N in "${samples[@]}"; do
         -i "$assembly" \
         -b "$sorted" \
         -o "$outdir"
-done
-
-### GTDB-Tk ###
-for N in "${samples[@]}"; do
-    bins="$base_dir/results/bins/semi_single_bin/bins/${N}/output_bins"
-
-    gtdbtk classify_wf \
-        --cpus 40 \
-        --genome_dir "$bins" \
-        -x fa.gz \
-        --out_dir "$base_dir/results/bins/semi_single_bin/gtdb/${N}" \
-        --skip_ani_screen
 done
 
 ### CheckM2 ###
