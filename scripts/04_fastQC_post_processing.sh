@@ -16,22 +16,22 @@ module load fastqc/0.11.9
 module load multiqc/1.12
 
 # Setup working directory and paths
-path="path to working directory"
+BASE="path to working directory"
 mkdir -p ${path}/results/qc/{fastqc_cleaned,multiqc_cleaned}
 stool_samples=$(cat "Path to stool sample list")
 enriched_samples=$(cat "Path to enriched sample list")
 
 # Run FastQC for stool samples
 for sample in ${stool_samples}; do
-    f="$path/results/host_removed/${sample}_1.fq.gz"
-    r="$path/results/host_removed/${sample}_2.fq.gz"
+    f="$BASE/results/host_removed/${sample}_1.fq.gz"
+    r="$BASE/results/host_removed/${sample}_2.fq.gz"
 	fastqc -o ${path}/results/qc/fastqc_cleaned -t 40 $f $r
 done
 
 # Run FastQC for enriched samples
 for sample in ${enriched_samples}; do
-    f="$path/results/trimmomatic/${sample}_trimmed_1.fq.gz"
-    r="$path/results/trimmomatic/${sample}_trimmed_2.fq.gz"
+    f="$BASE/results/trimmomatic/${sample}_trimmed_1.fq.gz"
+    r="$BASE/results/trimmomatic/${sample}_trimmed_2.fq.gz"
 	fastqc -o ${path}/results/qc/fastqc -t 40 $f $r
 done
 
