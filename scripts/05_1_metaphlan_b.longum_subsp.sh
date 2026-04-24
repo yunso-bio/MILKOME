@@ -31,8 +31,8 @@ module load tools
 module load metaphlan/4.1.0
 
 # Setup working directory and paths
-tf="$base_dir/results/host_removed/${N}_1.fastq.gz"
-tr="$base_dir/results/host_removed/${N}_2.fastq.gz"
+tf="$base_dir/results/host_removed/${N}_1.fq.gz"
+tr="$base_dir/results/host_removed/${N}_2.fq.gz"
 mkdir -p $base_dir/results/bif-metaphlan/{bowtie2,sams,original,convGTDB}
 d="path_to_db/metaphlan_bif_db_202307"
 
