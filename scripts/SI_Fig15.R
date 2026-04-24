@@ -1,7 +1,7 @@
-### SI Figure 16
+### SI Figure 15
 ### Author: Yunjeong So
 
-# SI Figure16 a. NMDS with infants mothers------------------------------------------------------
+# SI Figure15 a. NMDS with infants mothers------------------------------------------------------
 # Load libraries
 library(tidyverse)
 library(vegan)
@@ -84,7 +84,7 @@ p <- ggplot(data = nmds_scores, aes(x = NMDS1, y = NMDS2)) +
 print(p)
 
 
-# SI Figure16 b. Phyla bar plot------------------------------------------------------
+# SI Figure15 b. Phyla bar plot------------------------------------------------------
 # Reshape genome abundance data to long format
 genome_abundance_long <- genome_abundance %>%
   pivot_longer(cols = -ID, names_to = "taxa", values_to = "genome_abundance") %>%
