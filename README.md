@@ -7,7 +7,7 @@ We sequenced the fecal samples of infants at three different time points: pre-we
 The sequence data analysis pipeline is outlined below, and the used scripts can be found under milkome/scripts directory:
 
 1. Sequence quality check
-2. Sequence filtering and host gene removal
+2. Sequence filtering and host read removal
 3. Contig assembly
 4. Retrieval of metagenome-assembled genomes (MAGs)
 5. Mapping MAGs to filtered sequences
