@@ -3,22 +3,34 @@
 project/
 ├── data/
 │   ├── raw/
-│   │   ├── sample1_1.fq.gz
-│   │   ├── sample1_2.fq.gz
-│   │   └── ...
-│   ├── db/
-│
+│   └── db/
 ├── results/
 │   ├── qc/
-│   │   ├── fastqc/
-│   │   └── multiqc/
 │   ├── trimmomatic/
 │   ├── host_removed/
 │   ├── bowtie/
-│   └── megahit/
-│
+│   ├── bif-metaphlan/
+│   ├── megahit/
+│   ├── bakta/
+│   ├── dbcan/
+│   └── bins/
 └── scripts/
-    ├── 01_qc.sh
-    ├── 02_trim.sh
-    ├── 03_remove_host.sh
-    └── 04_megahit.sh
+    ├── 01_fastQC.sh
+    ├── 02_trimmomatic.sh
+    ├── 03_remove-human-host-reads.sh
+    ├── 04_fastQC_post_processing.sh
+    ├── 05_1_metaphlan_b.longum_subsp.sh
+    ├── 05_2_sgb_transfer.sh
+    ├── 05_3_sgb_to_gtdb_profile.py
+    ├── 06_assembly_megahit.sh
+    ├── 07_annotation_bakta.sh
+    ├── 08_annotation_cazyme.sh
+    ├── 09_1_binning_vamb-vae-aae.sh
+    ├── 09_2_binning_semibin.sh
+    ├── 09_3_swap_columns_vamb_output.sh
+    ├── 09_4_bins_dastool.sh
+    ├── 09_5_transfer_good_quality_bins.py
+    ├── 09_6_bins_dereplicate.sh
+    ├── 09_7_bins_gtdb.sh
+    ├── 09_8_bins_annotation_bakta.sh
+    └── 09_9_bins_annotation_cazyme.sh
