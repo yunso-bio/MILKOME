@@ -1,4 +1,7 @@
 # MILKOME Cohort Sutdy 
+
+[![DOI](https://zenodo.org/badge/817255711.svg)](https://doi.org/10.5281/zenodo.19817095)
+
 **Date:** 2026.04.27 <br>
 **Author:** Yunjeong So
 
