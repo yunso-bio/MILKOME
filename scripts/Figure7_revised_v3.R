@@ -1,7 +1,7 @@
-### Figure 6
+### Figure 7
 ### Author: Yunjeong So
 
-# Figure6 b. Bubble plot------------------------------------------------------
+# Figure7 b. Bubble plot------------------------------------------------------
 # Load necessary libraries
 library(tidyverse)
 library(RColorBrewer)
@@ -143,7 +143,7 @@ print(p)
 #ggsave(plot = p, filename = "figures/2025.mother-bubbles.0.01.svg", width = 6, height = 8, bg = "transparent")
 
 
-# Figure6 c. CAZymes gene enrichment ------------------------------------------------------
+# Figure7 c. CAZymes gene enrichment ------------------------------------------------------
 library(tidyverse)
 library(ggpubr)
 
