@@ -324,3 +324,287 @@ wilcox.test(w$F, w$HMOs, paired = TRUE, exact = FALSE)
 # Medians (paired samples only)
 cat("Median F:", median(w$F, na.rm = TRUE), "\n")
 cat("Median HMOs:", median(w$HMOs, na.rm = TRUE), "\n")
+
+
+# Figure7 d. MAG heatmap------------------------------------------------------
+
+# Libraries
+library(tidyverse)
+library(data.table)
+library(pheatmap)
+library(RColorBrewer)
+
+# File paths
+bin_taxa <- read_tsv("path to file")
+bin_metadata <- read_tsv("path to file")
+bin_gene_abundance <- read_tsv("path to file")
+grouped_cazymes <- read_tsv("path to file")
+metagenome_metadata <- read_tsv("path to file")
+metagenome_taxa <- read_tsv("path to file")
+mapping <- read_tsv("path to file")
+
+# Parameters
+top_species_n <- 20
+top_genes_per_subcategory <- 5
+min_total_abundance_to_keep_gene <- 4
+
+target_sub_category <- c(
+  "HMOs", "HMOs/host glycans", "HMOs/plant", "O-glycans", "Glycosaminoglycans",
+  "Starch", "Inulin", "Xylan-backbone", "Pectin-backbone", "β-glucans", "β-glucans, Xylan-backbone, Chitosanase", "Mannan",
+  "Gum Arabic"
+)
+
+classes_order <- c(
+  "Actinomycetes" = "#608cd8",
+  "Coriobacteriia" = "#2941a8",
+  "Bacilli" = "#c69c6d",
+  "Clostridia" = "#a26990",
+  "Negativicutes" = "#a88e7c",
+  "Bacteroidia" = "#307b16",
+  "Verrucomicrobiae" = "darkviolet",
+  "Gammaproteobacteria" = "coral4",
+  "Alphaproteobacteria" = "grey30",
+  "Brachyspirae" = "black"
+)
+
+# NEW: Species to force into Transit
+manual_transit_species <- c(
+  "Bifidobacterium catenulatum",
+  "Ruminococcus_B gnavus",
+  "Bacteroides fragilis"
+)
+
+# Prepare age category per mappedID
+age_mapping <- bin_metadata %>%
+  select(mappedID, representative_age, cluster_age) %>%
+  distinct() %>%
+  group_by(mappedID) %>%
+  summarise(
+    has_M = any(representative_age == "M" | str_starts(cluster_age, "M")),
+    has_I = any(representative_age == "I" | str_starts(cluster_age, "I")),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    age_category = case_when(
+      has_M & has_I ~ "Transit",
+      has_M ~ "M",
+      has_I ~ "I",
+      TRUE ~ "None"
+    )
+  )
+
+# Prepare metadata with mapping
+metagenome_metadata <- metagenome_metadata %>%
+  mutate(prefix = paste(infant, participant, sep = "_")) %>%
+  left_join(mapping, by = "ID")
+
+md_faeces <- metagenome_metadata %>%
+  filter(substrate == "F") %>%
+  select(ID, mappedID, infant) %>%
+  left_join(mapping, by = "ID") %>%
+  distinct()
+
+# Reshape species abundance and clean species names
+long_abundance <- metagenome_taxa %>%
+  filter(ID %in% md_faeces$ID) %>%
+  pivot_longer(-ID, names_to = "species", values_to = "abundance") %>%
+  mutate(
+    species = str_remove(species, "^s__"),
+    genus = word(species, 1),
+    species = case_when(
+      species == "Bifidobacterium longum.infantis" ~ "Bifidobacterium infantis",
+      species == "Bifidobacterium longum.longum" ~ "Bifidobacterium longum",
+      TRUE ~ species
+    )
+  ) %>%
+  filter(species != "Unclassified") %>%
+  left_join(select(metagenome_metadata, ID, infant), by = "ID")
+
+# Pick top species by total abundance separately for infant vs mother
+top_species <- long_abundance %>%
+  mutate(group = if_else(str_detect(infant, "^I"), "Infant", "Mother")) %>%
+  group_by(group, genus, species) %>%
+  summarise(total_abundance = sum(abundance, na.rm = TRUE), .groups = "drop") %>%
+  arrange(group, desc(total_abundance)) %>%
+  group_by(group) %>%
+  slice_head(n = top_species_n) %>%
+  filter(!genus %in% c("Veillonella", "Veillonella_A", "Alistipes")) %>%
+  ungroup()
+
+bifido_species <- long_abundance %>%
+  filter(genus == "Bifidobacterium") %>%
+  distinct(species)
+
+top_species <- top_species %>%
+  bind_rows(bifido_species) %>%
+  distinct(species, .keep_all = TRUE)
+
+# metadata
+split_metadata <- bin_taxa %>%
+  separate(
+    taxa,
+    into = c("kingdom", "phyla", "classes", "orders", "family", "genus", "species"),
+    sep = ";",
+    fill = "right"
+  ) %>%
+  mutate(
+    across(c(kingdom, phyla, classes, orders, family, genus, species), ~ str_replace(., "^[a-z]__", "")),
+    classes = str_replace(classes, "_[A-Z]$", ""),
+    genus = ifelse(is.na(genus) | genus == "", "unassigned_genus", genus),
+    species = ifelse(is.na(species) | species == "", "unassigned_species", species),
+    prefix = paste(species, mappedID, sep = "_")
+  ) %>%
+  filter(
+    species %in% top_species$species |
+      species == "Clostridium butyricum" |
+      species == "Roseburia intestinalis"
+  ) %>%
+  filter(!mappedID %in% c("A0105", "A0127", "A0077", "A0010", "A0041")) %>%
+  left_join(age_mapping, by = "mappedID") %>%
+  distinct(mappedID, species, classes, prefix, age_category) %>%
+  # NEW: force these species into Transit
+  mutate(
+    age_category = if_else(species %in% manual_transit_species, "Transit", as.character(age_category)),
+    classes = factor(classes, levels = names(classes_order)),
+    age_category = factor(age_category, levels = c("I", "Transit", "M"))
+  )
+
+# Select CAZyme columns
+cazy_cols <- grouped_cazymes %>%
+  filter(sub_category %in% target_sub_category) %>%
+  pull(cazymes) %>%
+  intersect(colnames(bin_gene_abundance))
+
+# Filter gene abundance
+gene_abund_sel <- bin_gene_abundance %>%
+  filter(mappedID %in% split_metadata$mappedID) %>%
+  select(mappedID, all_of(cazy_cols)) %>%
+  mutate(across(-mappedID, as.numeric))
+
+gene_abund_sel <- gene_abund_sel[
+  , c(TRUE, colSums(gene_abund_sel[, -1], na.rm = TRUE) > 0)
+]
+
+# Total abundance per CAZyme
+gene_totals <- gene_abund_sel %>%
+  summarise(across(-mappedID, ~ sum(.x, na.rm = TRUE))) %>%
+  pivot_longer(everything(), names_to = "CAZyme", values_to = "total_abundance")
+
+# Join annotation and restrict subcategories
+gene_totals_anno <- gene_totals %>%
+  left_join(grouped_cazymes, by = c("CAZyme" = "cazymes")) %>%
+  filter(!is.na(sub_category))
+
+# Pick top N CAZymes per sub_category
+top_genes <- gene_totals_anno %>%
+  group_by(sub_category) %>%
+  arrange(desc(total_abundance), .by_group = TRUE) %>%
+  slice_head(n = top_genes_per_subcategory) %>%
+  ungroup() %>%
+  pull(CAZyme) %>%
+  unique()
+
+# Long table of abundances for selected genes
+filtered_abundance <- gene_abund_sel %>%
+  select(mappedID, all_of(top_genes)) %>%
+  pivot_longer(-mappedID, names_to = "CAZyme", values_to = "Abundance") %>%
+  left_join(grouped_cazymes, by = c("CAZyme" = "cazymes"))
+
+# Build abundance matrix (RAW)
+abundance_matrix_raw <- filtered_abundance %>%
+  left_join(split_metadata, by = "mappedID") %>%
+  arrange(classes, species, prefix) %>%
+  group_by(CAZyme, prefix) %>%
+  summarise(Abundance = sum(Abundance, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = prefix, values_from = Abundance, values_fill = 0) %>%
+  column_to_rownames("CAZyme") %>%
+  as.matrix()
+
+# Column annotation
+column_annotation <- split_metadata %>%
+  filter(prefix %in% colnames(abundance_matrix_raw)) %>%
+  select(prefix, age_category, classes) %>%
+  distinct() %>%
+  mutate(
+    classes = factor(classes, levels = names(classes_order)),
+    age_category = factor(age_category, levels = c("I", "Transit", "M"))
+  ) %>%
+  arrange(age_category, classes, prefix) %>%
+  column_to_rownames("prefix")
+
+# Row annotation
+row_annotation <- filtered_abundance %>%
+  select(CAZyme, sub_category) %>%
+  distinct() %>%
+  filter(CAZyme %in% rownames(abundance_matrix_raw)) %>%
+  mutate(
+    sub_category = if (is.null(target_sub_category)) factor(sub_category) else factor(sub_category, levels = target_sub_category)
+  ) %>%
+  arrange(sub_category) %>%
+  column_to_rownames("CAZyme")
+
+# Reorder matrices to match annotations
+abundance_matrix_raw <- abundance_matrix_raw[
+  rownames(row_annotation),
+  rownames(column_annotation),
+  drop = FALSE
+]
+
+# Heatmap coloring on log scale ONLY (labels remain RAW)
+abundance_matrix_col <- log10(abundance_matrix_raw + 1)
+
+# Cell labels: RAW values (blank for zeros)
+label_matrix <- abundance_matrix_raw
+label_matrix[label_matrix == 0] <- ""
+label_matrix <- formatC(label_matrix, format = "f", digits = 0)
+
+# Continuous color breaks in log-space
+max_log <- max(abundance_matrix_col, na.rm = TRUE)
+breaks_col <- seq(0, max_log, length.out = 101)
+my_colours <- colorRampPalette(c("snow2", "red"))(length(breaks_col) - 1)
+
+# Legend ticks: shown as RAW but positioned in LOG space
+raw_ticks <- c(0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000)
+raw_ticks <- raw_ticks[raw_ticks <= max(abundance_matrix_raw, na.rm = TRUE)]
+
+legend_breaks_col <- log10(raw_ticks + 1)
+legend_labels_raw <- format(raw_ticks, big.mark = ",", trim = TRUE)
+
+annotation_colors <- list(
+  classes = classes_order,
+  age_category = c(
+    "I" = "#1b9e77",
+    "Transit" = "#d95f02",
+    "M" = "#7570b3"
+  )
+)
+
+# pheatmap
+p <- pheatmap(
+  abundance_matrix_col,
+  color = my_colours,
+  breaks = breaks_col,
+  legend_breaks = legend_breaks_col,
+  legend_labels = legend_labels_raw,
+  border_color = NA,
+  cluster_rows = FALSE,
+  cluster_cols = FALSE,
+  display_numbers = label_matrix,
+  number_color = "black",
+  annotation_col = column_annotation,
+  annotation_row = row_annotation %>% select(sub_category),
+  annotation_names_row = TRUE,
+  annotation_colors = annotation_colors,
+  fontsize_number = 5,
+  fontsize_row = 5,
+  fontsize_col = 5,
+  fontsize = 5,
+  angle_col = 45,
+  show_colnames = TRUE,
+  show_rownames = TRUE,
+  annotation_legend = TRUE
+)
+
+print(p)
+filename <- paste0("path to output file")
+#ggsave(plot = p, filename = filename, width = 5, height = 5.5, bg = "transparent")
