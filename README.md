@@ -1,4 +1,4 @@
-# MILKOME Cohort Sutdy 
+# MILKOME Cohort 
 
 [![DOI](https://zenodo.org/badge/817255711.svg)](https://doi.org/10.5281/zenodo.19817095)
 
