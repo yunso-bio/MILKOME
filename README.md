@@ -1,6 +1,6 @@
 # MILKOME Cohort 
 
-[![DOI](https://zenodo.org/badge/817255711.svg)](https://doi.org/10.5281/zenodo.19817095)
+[![DOI](https://zenodo.org/badge/817255711.svg)](https://doi.org/10.5281/zenodo.19817095) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Date:** 2026.04.27 <br>
 **Author:** Yunjeong So
